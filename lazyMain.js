@@ -1,8 +1,8 @@
 import { sleep } from './sleep.js';
 
 export class LazyMain {
-    sleepMin = 3;
-    sleepMax = 5;
+    sleepMinMS = 3000;
+    sleepMaxMS = 5000;
     /**
      * If -1 or lower,
      * it will infinitely loop.
@@ -26,14 +26,14 @@ export class LazyMain {
         } = kwargs;
 
         this.main = main;
-        this.sleepMin = sleepMin ?? this.sleepMin;
-        this.sleepMax = sleepMax ?? this.sleepMax;
+        this.sleepMinMS = sleepMin ?? this.sleepMinMS;
+        this.sleepMaxMS = sleepMax ?? this.sleepMaxMS;
         this.loopCount = loopCount ?? this.loopCount;
     }
 
     get #sleepTime() {
-        return Math.random() * this.sleepMin * 1000 +
-            this.sleepMax - this.sleepMin;
+        return Math.random() * this.sleepMinMS +
+            this.sleepMaxMS - this.sleepMinMS;
     }
 
     async run(...args) {
