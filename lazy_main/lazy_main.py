@@ -8,7 +8,7 @@ class LazyMain:
     def __init__(
         self,
         main: Callable[..., bool],
-        errorHandler: Callable[[Exception]] = None,  # type: ignore
+        errorHandler: Callable[[Exception], None] = None,  # type: ignore
         sleepMin=3,
         sleepMax=5,
         loopCount=-1,
