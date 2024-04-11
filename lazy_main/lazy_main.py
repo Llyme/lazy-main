@@ -10,9 +10,11 @@ class LazyMain:
         main: Callable[..., bool],
         error_handler: Callable[[Exception], None] = None,  # type: ignore
         print_logs: bool = True,
-        sleep_min=3,
-        sleep_max=5,
-        loop_count=-1,
+        sleep_min: int = 3,
+        sleep_max: int = 5,
+        loop_count: int = -1,
+        run_once: bool = None,  # type: ignore
+        run_forever: bool = None,  # type: ignore
     ):
         """
         main: The function that will be called every loop.
@@ -20,7 +22,9 @@ class LazyMain:
         print_logs: If it should print logs.
         sleep_min: Minimum sleep time, in seconds.
         sleep_max: Maximum sleep time, in seconds.
-        loop_count: How many times this will loop. If -1, it will infinitely loop.
+        loop_count: How many times this will loop. If `-1` or less, it will infinitely loop.
+        run_once: If `true`, the `main` function will only run once, otherwise it will run forever.
+        run_forever: If `true`, the `main` function will run forever, otherwise it will only run once.
         """
         self.main = main
         self.error_handler = error_handler
@@ -28,6 +32,12 @@ class LazyMain:
         self.sleep_min = sleep_min
         self.sleep_max = sleep_max
         self.loop_count = loop_count
+
+        if run_once != None:
+            self.loop_count = 1 if run_once else -1
+
+        elif run_forever != None:
+            self.loop_count = -1 if run_forever else 1
 
     def __get_sleep_time(self):
         return random() * self.sleep_min + self.sleep_max - self.sleep_min
