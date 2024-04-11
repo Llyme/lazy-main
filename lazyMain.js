@@ -11,27 +11,70 @@ export class LazyMain {
 
     /**
      * 
-     * @param {object} kwargs
-     * @param {function(...args): Promise<boolean>} kwargs.main
-     * @param {function(Error): void|undefined} kwargs.errorHandler
-     * @param {number|undefined} kwargs.sleepMin
-     * @param {number|undefined} kwargs.sleepMax
-     * @param {number|undefined} kwargs.loopCount
+     * @param {object} config
+     * 
+     * @param {function(...args): Promise<boolean>} config.main
+     * The `main` function.
+     * 
+     * @param {function(Error): void} [config.errorHandler]
+     * Called when the `main` function
+     * raised an error.
+     * 
+     * @param {number} [config.sleepMin]
+     * The minimum sleep time between
+     * each run.
+     * 
+     * Default `3000`.
+     * 
+     * @param {number} [config.sleepMax]
+     * The maximum sleep time between
+     * each run.
+     * 
+     * Default `5000`.
+     * 
+     * @param {number} [config.loopCount]
+     * How many times should the `main` function
+     * be called?
+     * 
+     * if `-1` or less,
+     * it will run forever.
+     * 
+     * Default `-1`
+     * 
+     * @param {boolean} [config.runOnce]
+     * If `true`, the `main` function
+     * will only run once,
+     * otherwise it will run forever.
+     * 
+     * @param {boolean} [config.runForever]
+     * If `true`, the `main` function
+     * will run forever,
+     * otherwise it will only run once.
      */
-    constructor(kwargs) {
+    constructor(config) {
         const {
             main,
             errorHandler,
             sleepMin,
             sleepMax,
-            loopCount
-        } = kwargs;
+            loopCount,
+            runOnce,
+            runForever
+        } = config;
 
         this.main = main;
         this.errorHandler = errorHandler;
         this.sleepMinMS = sleepMin ?? this.sleepMinMS;
         this.sleepMaxMS = sleepMax ?? this.sleepMaxMS;
-        this.loopCount = loopCount ?? this.loopCount;
+
+        if (loopCount !== undefined)
+            this.loopCount = loopCount ?? this.loopCount;
+
+        else if (runOnce !== undefined)
+            this.loopCount = runOnce ? 1 : -1;
+
+        else if (runForever !== undefined)
+            this.loopCount = runForever ? -1 : 1;
     }
 
     get #sleepTime() {
