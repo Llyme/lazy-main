@@ -1,13 +1,14 @@
 from random import random
 from time import perf_counter, sleep
 import traceback
-from typing import Callable
+import signal
+from typing import Callable, Union
 
 
 class LazyMain:
     def __init__(
         self,
-        main: Callable[..., bool],
+        main: Callable[..., Union[bool, signal.Signals]],
         error_handler: Callable[[Exception], None] = None,  # type: ignore
         print_logs: bool = True,
         sleep_min: int = 3,
@@ -55,10 +56,14 @@ class LazyMain:
             except Exception as e:
                 if self.print_logs:
                     print("An error ocurred.", e)
-                traceback.print_exc()
+
+                    traceback.print_exc()
 
                 if self.error_handler != None:
                     self.error_handler(e)
+
+            if ok == signal.SIGTERM:
+                break
 
             sleep_time = self.__get_sleep_time()
 
