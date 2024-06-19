@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "lazy-main"
-version = "0.1.4"
+version = "0.2.0"
 description = ""
 authors = ["Mister Nyan <michael.edmund.wong@gmail.com>"]
 readme = "README.md"
