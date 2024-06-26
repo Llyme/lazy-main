@@ -2,14 +2,24 @@ from random import random
 from time import perf_counter, sleep
 import traceback
 import signal
-from typing import Callable, Union
+from typing import Callable, Iterable, Union
 
 
 class LazyMain:
     def __init__(
         self,
-        main: Callable[..., Union[bool, signal.Signals]],
-        error_handler: Callable[[Exception], None] = None,  # type: ignore
+        main: Callable[
+            ...,
+            Union[
+                bool,
+                signal.Signals,
+                Iterable[Union[bool, signal.Signals]],
+            ],
+        ],
+        error_handler: Callable[
+            [Exception],
+            None,
+        ] = None,  # type: ignore
         print_logs: bool = True,
         sleep_min: int = 3,
         sleep_max: int = 5,
@@ -49,6 +59,19 @@ class LazyMain:
     def __get_sleep_time(self):
         return random() * self.sleep_min + self.sleep_max - self.sleep_min
 
+    def __get_result(self, result):
+        if not isinstance(result, Iterable):
+            return result
+
+        for value in result:
+            if value == signal.SIGTERM:
+                return signal.SIGTERM
+
+            if value:
+                return True
+
+        return False
+
     def run(self, *args, **kwargs):
         """
         Starts the loop.
@@ -59,6 +82,8 @@ class LazyMain:
 
             try:
                 ok = self.main(*args, **kwargs)
+                ok = self.__get_result(ok)
+
             except Exception as e:
                 if self.print_logs:
                     print("An error ocurred.", e)
