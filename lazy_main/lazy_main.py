@@ -21,8 +21,8 @@ class LazyMain:
             None,
         ] = None,  # type: ignore
         print_logs: bool = True,
-        sleep_min: int = 3,
-        sleep_max: int = 5,
+        sleep_min: float = 3,
+        sleep_max: float = 5,
         loop_count: int = -1,
         run_once: bool = None,  # type: ignore
         run_forever: bool = None,  # type: ignore
