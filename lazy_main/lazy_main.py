@@ -126,5 +126,5 @@ class LazyMain:
 
         try:
             exit(0)
-        except Exception as e:
-            print("Failed to exit gracefully.", e)
+        except:
+            print("Failed to exit gracefully. Exiting anyway.")
