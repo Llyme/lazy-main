@@ -3,6 +3,7 @@ from time import perf_counter, sleep
 import traceback
 import signal
 from typing import Callable, Iterable, Union
+from .loop import Loop
 
 
 class LazyMain:
@@ -72,16 +73,18 @@ class LazyMain:
 
         return False
 
-    def run(self, *args, **kwargs):
-        """
-        Starts the loop.
-        """
+    def __iter__(self):
+        return Loop(self.__iterable)
+
+    def __iterable(self, loop: Loop):
         while True:
+            yield None
+
             ok = False
             t1 = perf_counter()
 
             try:
-                ok = self.main(*args, **kwargs)
+                ok = self.main(*loop.args, **loop.kwargs)
                 ok = self.__get_result(ok)
 
             except Exception as e:
@@ -130,3 +133,10 @@ class LazyMain:
             # Probably already exited.
             # print("Failed to exit gracefully. Exiting anyway.")
             pass
+
+    def run(self, *args, **kwargs):
+        """
+        Starts the loop.
+        """
+        for loop in self:
+            loop(*args, **kwargs)
