@@ -78,8 +78,6 @@ class LazyMain:
 
     def __iterable(self, loop: Loop):
         while True:
-            yield None
-
             ok = False
             t1 = perf_counter()
 
@@ -117,6 +115,8 @@ class LazyMain:
                 break
 
             sleep(sleep_time)
+
+            yield None
 
         if not self.exit_on_finish:
             return
