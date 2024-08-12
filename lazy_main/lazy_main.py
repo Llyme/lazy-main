@@ -64,14 +64,16 @@ class LazyMain:
         if not isinstance(result, Iterable):
             return result
 
+        ok = False
+
         for value in result:
             if value == signal.SIGTERM:
                 return signal.SIGTERM
 
             if value:
-                return True
+                ok = True
 
-        return False
+        return ok
 
     def __iter__(self):
         return Loop(self.__iterable)
