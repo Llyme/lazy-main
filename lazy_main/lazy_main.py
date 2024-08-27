@@ -110,7 +110,7 @@ class LazyMain:
                 if self.print_logs:
                     print(f"Done in {t2 - t1:.2f}s.")
 
-                if self.loop_count > 0 and self.print_logs:
+                if self.loop_count != 0 and self.print_logs:
                     print(f"Sleeping for {sleep_time:.2f}s...")
 
             if self.loop_count == 0:
