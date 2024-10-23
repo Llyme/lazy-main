@@ -1,12 +1,15 @@
-# lazy-main
+# lazy-main #
+
 Generalized framework for main loop function.
 
-## Installation
+## Installation ##
+
 ```sh
 pip install lazy-main
 ```
 
-## How to Use
+## How to Use ##
+
 ```py
 from lazy_main import LazyMain
 
@@ -25,6 +28,35 @@ if __name__ == "__main__":
         print_logs=True,
         loop_count=-1, # -1 Means it will loop infinitely.
     ).run()
+```
+
+Some aliases are also provided for `loop_count`.
+
+```py
+...
+
+LazyMain(
+    ...
+    # Sets `loop_count` to 1 if `True`.
+    # Sets `loop_count` to -1 if `False`.
+    # Does nothing if `None`.
+    run_once=True,
+    ...
+)
+
+
+# Or...
+
+LazyMain(
+    ...
+    # Sets `loop_count` to -1 if `True`.
+    # Sets `loop_count` to 1 if `False`.
+    # Does nothing if `None`.
+    run_forever=True,
+    ...
+)
+
+...
 ```
 
 You can also pass arguments to the `main` function.
@@ -57,6 +89,23 @@ if __name__ == "__main__":
     ).run() # Done in 0.10s.
 ```
 
+If you don't like the logs, you can disable it.
+
+```py
+from lazy_main import LazyMain
+
+...
+
+if __name__ == "__main__":
+    LazyMain(
+        ...
+        print_logs=False,
+        ...
+    ).run()
+
+...
+```
+
 Returning `SIGTERM` will terminate the loop.
 
 ```py
@@ -72,4 +121,44 @@ if __name__ == "__main__":
     ).run()
 
     print("I'm free!")
+```
+
+You can also use a generator for the return value.
+
+```py
+from lazy_main import LazyMain
+import signal
+
+def main():
+    for i in range(10):
+        if i == 5:
+            yield signal.SIGTERM
+
+if __name__ == "__main__":
+    LazyMain(
+        main=main,
+    ).run()
+
+    print("I'm free!")
+```
+
+You can also provide dynamic kwargs via iteration.
+
+```py
+from lazy_main import LazyMain
+
+def main(*args, **kwargs):
+    print(kwargs["hello"]) # 0, 1, 2, 3, ...
+
+if __name__ == "__main__":
+    i = 0
+    
+    for loop in LazyMain(
+        main=main,
+    ):
+        loop(
+            hello=i,
+        )
+
+        i += 1
 ```

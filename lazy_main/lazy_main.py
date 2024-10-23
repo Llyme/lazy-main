@@ -2,7 +2,7 @@ from random import random
 from time import perf_counter, sleep
 import traceback
 import signal
-from typing import Callable, Iterable, Union
+from typing import Any, Callable, Iterable
 from .loop import Loop
 
 
@@ -11,15 +11,11 @@ class LazyMain:
         self,
         main: Callable[
             ...,
-            Union[
-                bool,
-                signal.Signals,
-                Iterable[Union[bool, signal.Signals]],
-            ],
+            Any,
         ],
         error_handler: Callable[
             [Exception],
-            None,
+            Any,
         ] = None,  # type: ignore
         print_logs: bool = True,
         sleep_min: float = 3,
@@ -37,9 +33,9 @@ class LazyMain:
         sleep_min: Minimum sleep time, in seconds.
         sleep_max: Maximum sleep time, in seconds.
         loop_count: How many times this will loop. If `-1` or less, it will infinitely loop.
-        run_once: If `true`, the `main` function will only run once, otherwise it will run forever.
-        run_forever: If `true`, the `main` function will run forever, otherwise it will only run once.
-        exit_at_the_end: If `true`, `exit(0)` is called after the loop finishes.
+        run_once: If `True`, the `main` function will only run once, otherwise it will run forever.
+        run_forever: If `True`, the `main` function will run forever, otherwise it will only run once.
+        exit_on_finish: If `true`, `exit(0)` is called after the loop finishes.
         exit_delay: Seconds before calling `exit(0)`.
         """
         self.main = main
