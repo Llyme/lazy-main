@@ -1,14 +1,14 @@
-# lazy-main #
+# lazy-main
 
 Generalized framework for main loop function.
 
-## Installation ##
+## Installation
 
 ```sh
 pip install lazy-main
 ```
 
-## How to Use ##
+## How to Use
 
 ```py
 from lazy_main import LazyMain
@@ -106,14 +106,13 @@ if __name__ == "__main__":
 ...
 ```
 
-Returning `SIGTERM` will terminate the loop.
+Returning `Terminate` will terminate the loop.
 
 ```py
-from lazy_main import LazyMain
-import signal
+from lazy_main import LazyMain, Terminate
 
 def main():
-    return signal.SIGTERM
+    return Terminate
 
 if __name__ == "__main__":
     LazyMain(
@@ -126,13 +125,12 @@ if __name__ == "__main__":
 You can also use a generator for the return value.
 
 ```py
-from lazy_main import LazyMain
-import signal
+from lazy_main import LazyMain, Terminate
 
 def main():
     for i in range(10):
         if i == 5:
-            yield signal.SIGTERM
+            yield Terminate
 
 if __name__ == "__main__":
     LazyMain(
@@ -152,7 +150,7 @@ def main(*args, **kwargs):
 
 if __name__ == "__main__":
     i = 0
-    
+
     for loop in LazyMain(
         main=main,
     ):

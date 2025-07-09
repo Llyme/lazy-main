@@ -1,8 +1,9 @@
+import traceback
 from random import random
 from time import perf_counter, sleep
-import traceback
-import signal
 from typing import Any, Callable, Iterable
+
+from .flag import Terminate
 from .loop import Loop
 
 
@@ -47,10 +48,10 @@ class LazyMain:
         self.exit_on_finish = exit_on_finish
         self.exit_delay = exit_delay
 
-        if run_once != None:
+        if run_once is not None:
             self.loop_count = 1 if run_once else -1
 
-        elif run_forever != None:
+        elif run_forever is not None:
             self.loop_count = -1 if run_forever else 1
 
     def __get_sleep_time(self):
@@ -63,8 +64,8 @@ class LazyMain:
         ok = False
 
         for value in result:
-            if value == signal.SIGTERM:
-                return signal.SIGTERM
+            if value is Terminate:
+                return Terminate
 
             if value:
                 ok = True
@@ -89,10 +90,10 @@ class LazyMain:
 
                     traceback.print_exc()
 
-                if self.error_handler != None:
+                if self.error_handler is not None:
                     self.error_handler(e)
 
-            if ok == signal.SIGTERM:
+            if ok is Terminate:
                 break
 
             sleep_time = self.__get_sleep_time()
@@ -127,7 +128,7 @@ class LazyMain:
 
         try:
             exit(0)
-        except:
+        except Exception:
             # Probably already exited.
             # print("Failed to exit gracefully. Exiting anyway.")
             pass
