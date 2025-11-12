@@ -1,7 +1,7 @@
 import traceback
 from random import random
 from time import perf_counter, sleep
-from typing import Any, Callable, Iterable
+from typing import Any, Callable, Iterable, Union
 
 from .flag import Terminate
 from .loop import Loop
@@ -19,8 +19,8 @@ class LazyMain:
             Any,
         ] = None,  # type: ignore
         print_logs: bool = True,
-        sleep_min: float = 3,
-        sleep_max: float = 5,
+        sleep_min: Union[float, Callable[..., float]] = 3,
+        sleep_max: Union[float, Callable[..., float]] = 5,
         loop_count: int = -1,
         run_once: bool = None,  # type: ignore
         run_forever: bool = None,  # type: ignore
@@ -55,7 +55,10 @@ class LazyMain:
             self.loop_count = -1 if run_forever else 1
 
     def __get_sleep_time(self):
-        return random() * self.sleep_min + self.sleep_max - self.sleep_min
+        sleep_min = self.sleep_min() if callable(self.sleep_min) else self.sleep_min
+        sleep_max = self.sleep_max() if callable(self.sleep_max) else self.sleep_max
+
+        return random() * sleep_min + sleep_max - sleep_min
 
     def __get_result(self, result):
         if not isinstance(result, Iterable):
